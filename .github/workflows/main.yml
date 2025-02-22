@@ -18,6 +18,9 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+          
+      - name: Grant execute permission to Maven Wrapper
+        run: chmod +x mvnw  
 
       - name: Build Spring Boot App
         run: |
