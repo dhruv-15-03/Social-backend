@@ -13,6 +13,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build Spring Boot App
+        run: |
+          ./mvnw clean package  # Use for Maven
+          # gradle build  # Use this if using Gradle
+
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
@@ -24,3 +35,4 @@ jobs:
 
       - name: Deploy to Render
         run: curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+
