@@ -7,6 +7,7 @@ import com.example.demo.DataBase.CommentsAll;
 import com.example.demo.DataBase.PostAll;
 import com.example.demo.DataBase.UserAll;
 import com.example.demo.Exception.PostException;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +22,14 @@ public class PostImplement implements PostMethods {
     PostAll postAll;
     @Autowired
     CommentsAll commentsAll;
+    private final MeterRegistry meterRegistry;
+    public PostImplement(MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
+    }
     @Override
     public Post newPost(Post post, Integer userId) {
        User user=userAll.getReferenceById(userId);
+       meterRegistry.counter("thoughts.posts.created").increment();
        List<Post> temp=user.getPosts();
        temp.add(post);
        user.setPosts(temp);
