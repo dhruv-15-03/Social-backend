@@ -4,7 +4,7 @@ services:
   backend:
     image: dhruv1503/thought:latest
     ports:
-      - "8081:8081"
+      - "8085:8085"
     env_file:
       - data.env
     restart: always
