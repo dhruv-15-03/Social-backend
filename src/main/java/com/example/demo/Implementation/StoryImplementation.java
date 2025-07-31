@@ -17,7 +17,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class StoryImplementation implements StoryMethods{
+public class StoryImplementation implements StoryMethods, org.springframework.beans.factory.InitializingBean {
     @Autowired
     private StoryAll storyAll;
     @Autowired
@@ -28,7 +28,6 @@ public class StoryImplementation implements StoryMethods{
     @Override
     public Story post(Story story, User user) {
         story.setTime(LocalDateTime.now());
-        scheduleExpiration(story);
         story.setMain(user);
 
         List<Story> temp = user.getStory();
@@ -41,19 +40,30 @@ public class StoryImplementation implements StoryMethods{
         return story;
     }
 
-    private void scheduleExpiration(Story story) {
-        scheduler.schedule(() -> {
+    // Scheduled cleanup task to delete expired stories
+    @Override
+    public void afterPropertiesSet() {
+        scheduler.scheduleAtFixedRate(() -> {
             try {
-                expire(story);
-            } catch (StoryException e) {
-                // Handle exception (log the error)
-                System.err.println("Error expiring story: " + e.getMessage());
+                cleanupExpiredStories();
+            } catch (Exception e) {
+                System.err.println("Error cleaning up expired stories: " + e.getMessage());
             }
-        }, 24, TimeUnit.HOURS);
+        }, 1, 1, TimeUnit.HOURS); // runs every hour
     }
 
-    private void expire(Story story) throws StoryException {
-        Delete(story.getId(), story.getMain());
+    private void cleanupExpiredStories() {
+        List<Story> allStories = storyAll.findAll();
+        LocalDateTime now = LocalDateTime.now();
+        for (Story story : allStories) {
+            if (story.getTime() != null && story.getTime().plusHours(24).isBefore(now)) {
+                try {
+                    Delete(story.getId(), story.getMain());
+                } catch (Exception e) {
+                    System.err.println("Failed to delete expired story: " + e.getMessage());
+                }
+            }
+        }
     }
     @Override
     public Story like(Integer storyId, User user) throws StoryException {
