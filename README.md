@@ -51,6 +51,7 @@ This is the backend service for the [Social](https://github.com/dhruv-15-03/soci
    ```
 2. **Configure environment**
    - Edit `data.env` and `src/main/resources/application.properties` as needed.
+   - For Render deployment, set `KEEP_ALIVE_URL` to your deployed app URL (e.g., `https://your-app.onrender.com`)
 3. **Build and run (Maven)**
    ```sh
    ./mvnw spring-boot:run
@@ -61,6 +62,38 @@ This is the backend service for the [Social](https://github.com/dhruv-15-03/soci
    ```
 5. **Access Prometheus**
    - Prometheus metrics available at `/actuator/prometheus` (if enabled)
+
+## Anti-Sleep Configuration (For Free Hosting)
+To prevent your app from sleeping on free hosting platforms like Render:
+
+### Built-in Keep-Alive
+The application includes an automatic keep-alive service that:
+- Pings `/api/health` every 10 minutes
+- Prevents the server from going idle
+- Logs activity for monitoring
+
+### External Monitoring (Recommended)
+For additional reliability, set up external monitoring:
+
+1. **UptimeRobot** (Free - recommended)
+   - Sign up at [uptimerobot.com](https://uptimerobot.com)
+   - Add monitor: `https://your-app.onrender.com/api/ping`
+   - Set interval: 10 minutes
+   - This ensures your app stays awake even if internal keep-alive fails
+
+2. **Alternative Services**
+   - Pingdom
+   - StatusCake
+   - Any cron job service
+
+### Environment Variables for Deployment
+```env
+KEEP_ALIVE_URL=https://your-app.onrender.com
+PORT=8080
+DB_URL=your_database_url
+DB_USER=your_database_user
+DB_PASS=your_database_password
+```
 
 ## API Documentation
 - RESTful endpoints for all core features (users, stories, posts, chat, etc.)

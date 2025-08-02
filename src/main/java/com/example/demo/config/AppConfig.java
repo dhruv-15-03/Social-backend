@@ -13,11 +13,9 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.client.RestTemplate;
 
-
-import java.lang.reflect.Array;
 import java.util.Arrays;
-import java.util.Collections;
 
 @Configuration
 //@EnableWebSecurity
@@ -56,5 +54,12 @@ public class AppConfig {
     @Bean
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        RestTemplate restTemplate = new RestTemplate();
+        // Set timeouts to prevent hanging during keep-alive pings
+        return restTemplate;
     }
 }

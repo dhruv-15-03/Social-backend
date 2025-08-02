@@ -50,19 +50,6 @@ public class StoryImplementation implements StoryMethods, org.springframework.be
                 System.err.println("Error cleaning up expired stories: " + e.getMessage());
             }
         }, 1, 1, TimeUnit.HOURS);
-
-        scheduler.scheduleAtFixedRate(() -> {
-            try {
-                keepAlive();
-            } catch (Exception e) {
-                System.err.println("Error in keep-alive task: " + e.getMessage());
-            }
-        }, 0, 10, TimeUnit.MINUTES);
-    }
-
-    private void keepAlive() {
-        long count = storyAll.count();
-        System.out.println("Keep-alive ping: Story count = " + count);
     }
 
     private void cleanupExpiredStories() {
