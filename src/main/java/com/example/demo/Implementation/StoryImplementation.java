@@ -40,16 +40,29 @@ public class StoryImplementation implements StoryMethods, org.springframework.be
         return story;
     }
 
-    // Scheduled cleanup task to delete expired stories
     @Override
     public void afterPropertiesSet() {
+        // Schedule cleanup of expired stories every hour
         scheduler.scheduleAtFixedRate(() -> {
             try {
                 cleanupExpiredStories();
             } catch (Exception e) {
                 System.err.println("Error cleaning up expired stories: " + e.getMessage());
             }
-        }, 1, 1, TimeUnit.HOURS); // runs every hour
+        }, 1, 1, TimeUnit.HOURS);
+
+        scheduler.scheduleAtFixedRate(() -> {
+            try {
+                keepAlive();
+            } catch (Exception e) {
+                System.err.println("Error in keep-alive task: " + e.getMessage());
+            }
+        }, 0, 10, TimeUnit.MINUTES);
+    }
+
+    private void keepAlive() {
+        long count = storyAll.count();
+        System.out.println("Keep-alive ping: Story count = " + count);
     }
 
     private void cleanupExpiredStories() {
