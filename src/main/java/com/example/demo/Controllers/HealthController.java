@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
 public class HealthController {
 
     @Autowired
@@ -27,7 +26,6 @@ public class HealthController {
         Map<String, Object> response = new HashMap<>();
         
         try {
-            // Lightweight database ping
             long storyCount = storyAll.count();
             long userCount = userAll.count();
             

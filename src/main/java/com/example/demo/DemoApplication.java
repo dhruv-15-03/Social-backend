@@ -11,7 +11,6 @@ public class DemoApplication {
 	public static void main(String[] args) {
 		ConfigurableApplicationContext context = SpringApplication.run(DemoApplication.class, args);
 		
-		// Start keep-alive service to prevent Render from sleeping
 		KeepAliveService keepAliveService = context.getBean(KeepAliveService.class);
 		keepAliveService.startKeepAlive();
 		
